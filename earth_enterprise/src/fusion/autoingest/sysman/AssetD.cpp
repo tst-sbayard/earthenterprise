@@ -28,7 +28,7 @@ MutableAssetD::DirtyMap MutableAssetD::dirtyMap = MutableAssetD::DirtyMap();
 // ****************************************************************************
 
 khRefGuard<AssetImplD>
-AssetImplD::Load(const std::string &boundref)
+AssetImplD::Load(const SharedString &boundref)
 {
   khRefGuard<AssetImplD> result;
 
@@ -43,14 +43,14 @@ AssetImplD::Load(const std::string &boundref)
 }
 
 void
-AssetImplD::AddVersionRef(const std::string &verref)
+AssetImplD::AddVersionRef(const SharedString &verref)
 {
   // add to beginning of my list of versions
   versions.insert(versions.begin(), verref);
 }
 
 void
-AssetImplD::Modify(const std::vector<std::string>& inputs_,
+AssetImplD::Modify(const std::vector<SharedString>& inputs_,
                    const khMetaData &meta_) {
   inputs = inputs_;
   meta = meta_;
@@ -77,7 +77,7 @@ AssetImplD::UpdateInputs(std::vector<AssetVersion> &inputvers) const
   std::size_t inputs_count = inputs.size();
 
   inputvers.reserve(inputs_count);
-  for (std::vector<std::string>::const_iterator i = inputs.begin();
+  for (std::vector<SharedString>::const_iterator i = inputs.begin();
        i != inputs.end(); ++i) {
     AssetVersionRef verref(*i);
     if (verref.Version() == "current") {

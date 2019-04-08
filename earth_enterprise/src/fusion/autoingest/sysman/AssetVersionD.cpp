@@ -44,7 +44,7 @@ AssetVersionImplD::StateChangeNotifier::GetNotifier(
 }
 
 void
-AssetVersionImplD::StateChangeNotifier::AddParentsToNotify(const std::vector<std::string> & parents) {
+AssetVersionImplD::StateChangeNotifier::AddParentsToNotify(const std::vector<SharedString> & parents) {
   std::copy(parents.begin(), parents.end(), std::inserter(parentsToNotify, parentsToNotify.end()));
   if (!MiscConfig::Instance().ConsolidateListenerNotifications) {
     // If the user has opted not to consolidate notifications, send
@@ -54,8 +54,8 @@ AssetVersionImplD::StateChangeNotifier::AddParentsToNotify(const std::vector<std
 }
 
 void
-AssetVersionImplD::StateChangeNotifier::AddListenersToNotify(const std::vector<std::string> & listeners, AssetDefs::State inputState) {
-  for (const std::string & listener : listeners) {
+AssetVersionImplD::StateChangeNotifier::AddListenersToNotify(const std::vector<SharedString> & listeners, AssetDefs::State inputState) {
+  for (const SharedString & listener : listeners) {
     // This ensures that the listener is in the list of listeners to notify
     InputStates & elem = listenersToNotify[listener];
     if (inputState == AssetDefs::Succeeded) {
@@ -91,7 +91,7 @@ AssetVersionImplD::StateChangeNotifier::NotifyParents(
     std::shared_ptr<StateChangeNotifier> notifier) {
   notify(NFY_VERBOSE, "Iterate through parents");
   int i = 1;
-  for (const std::string & ref : parentsToNotify) {
+  for (const SharedString & ref : parentsToNotify) {
     AssetVersionD assetVersion(ref);
     notify(NFY_PROGRESS, "Iteration: %d | Total Iterations: %s | parent: %s",
            i,
@@ -114,8 +114,8 @@ AssetVersionImplD::StateChangeNotifier::NotifyListeners(
     std::shared_ptr<StateChangeNotifier> notifier) {
   notify(NFY_VERBOSE, "Iterate through listeners");
   int i = 1;
-  for (const std::pair<std::string, InputStates> & elem : listenersToNotify) {
-    const std::string & ref = elem.first;
+  for (const std::pair<SharedString, InputStates> & elem : listenersToNotify) {
+    const SharedString & ref = elem.first;
     const InputStates & states = elem.second;
     AssetVersionD assetVersion(ref);
     notify(NFY_PROGRESS, "Iteration: %d | Total Iterations: %s | listener: %s",
@@ -147,7 +147,7 @@ MutableAssetVersionD::DirtyMap MutableAssetVersionD::dirtyMap = MutableAssetVers
 // ***  AssetVersionImplD
 // ****************************************************************************
 khRefGuard<AssetVersionImplD>
-AssetVersionImplD::Load(const std::string &boundref)
+AssetVersionImplD::Load(const SharedString &boundref)
 {
   khRefGuard<AssetVersionImplD> result;
 
@@ -371,7 +371,7 @@ AssetVersionImplD::PropagateProgress(void)
 {
   notify(NFY_VERBOSE, "PropagateProgress(%s): %s",
          ToString(progress).c_str(), GetRef().c_str());
-  for (std::vector<std::string>::const_iterator p = parents.begin();
+  for (std::vector<SharedString>::const_iterator p = parents.begin();
        p != parents.end(); ++p) {
     AssetVersionD parent(*p);
     if (parent) {
@@ -409,7 +409,7 @@ AssetVersionImplD::HandleChildStateChange(const std::shared_ptr<StateChangeNotif
 }
 
 void
-AssetVersionImplD::HandleChildProgress(const std::string &) const
+AssetVersionImplD::HandleChildProgress(const SharedString &) const
 {
   // NoOp in base since leaves don't do anything
 }
@@ -466,11 +466,11 @@ AssetVersionImplD::ClearBad(void)
 
 
 bool
-AssetVersionImplD::OkToClean(std::vector<std::string> *wouldbreak) const
+AssetVersionImplD::OkToClean(std::vector<SharedString> *wouldbreak) const
 {
   // --- check that it's ok to clean me ---
   // If I have a successful parent, then my cleaning would break him
-  for (std::vector<std::string>::const_iterator p = parents.begin();
+  for (std::vector<SharedString>::const_iterator p = parents.begin();
        p != parents.end(); ++p) {
     AssetVersionD parent(*p);
     if (parent) {
@@ -490,7 +490,7 @@ AssetVersionImplD::OkToClean(std::vector<std::string> *wouldbreak) const
 
   // If I have succesfull listeners that depend on me, then my cleaning woul
   // break them
-  for (std::vector<std::string>::const_iterator l = listeners.begin();
+  for (std::vector<SharedString>::const_iterator l = listeners.begin();
        l != listeners.end(); ++l) {
     AssetVersionD listener(*l);
     if (listener) {
@@ -563,12 +563,12 @@ AssetVersionImplD::Clean(void)
   }
 
   // Check to see if it's OK to clean me
-  std::vector<std::string> wouldbreak;
+  std::vector<SharedString> wouldbreak;
   if (!OkToClean(&wouldbreak)) {
     throw khException
       (kh::tr("Unable to clean '%1'.\nIt would break the following:\n")
        .arg(GetRef()) +
-       join<std::vector<std::string>::iterator>(wouldbreak.begin(), wouldbreak.end(), "\n"));
+       join<std::vector<SharedString>::iterator>(wouldbreak.begin(), wouldbreak.end(), "\n"));
   }
 
   DoClean();
@@ -576,10 +576,10 @@ AssetVersionImplD::Clean(void)
 
 
 AssetVersionImplD::InputVersionHolder::InputVersionHolder
-(const std::vector<std::string> &inputrefs)
+(const std::vector<SharedString> &inputrefs)
 {
   inputvers.reserve(inputrefs.size());
-  for (std::vector<std::string>::const_iterator i = inputrefs.begin();
+  for (std::vector<SharedString>::const_iterator i = inputrefs.begin();
        i != inputrefs.end(); ++i) {
     inputvers.push_back(*i);
   }
@@ -1047,7 +1047,7 @@ CompositeAssetVersionImplD::HandleInputStateChange(InputStates, const std::share
 }
 
 void
-CompositeAssetVersionImplD::HandleChildProgress(const std::string &) const
+CompositeAssetVersionImplD::HandleChildProgress(const SharedString &) const
 {
   // TODO: - implement me some day
 }
@@ -1105,7 +1105,7 @@ CompositeAssetVersionImplD::ComputeState(void) const
   uint numblocking = 0;
   uint numinprog = 0;
   uint numfailed = 0;
-  for (std::vector<std::string>::const_iterator c = children.begin();
+  for (std::vector<SharedString>::const_iterator c = children.begin();
        c != children.end(); ++c) {
     AssetVersion child(*c);
     if (child) {

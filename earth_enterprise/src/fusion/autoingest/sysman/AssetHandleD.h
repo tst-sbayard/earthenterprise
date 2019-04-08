@@ -23,6 +23,7 @@
 #include <khException.h>
 #include <khFileUtils.h>
 #include "common/khCppStd.h"
+#include "common/SharedString.h"
 
 
 /******************************************************************************
@@ -45,7 +46,7 @@ class DerivedAssetHandleD_ : public virtual BaseD_, public ROBase_
  protected:
   // must overide both of these to verify that things match
   // my 'Impl' type
-  virtual HandleType CacheFind(const std::string &boundref) const {
+  virtual HandleType CacheFind(const SharedString &boundref) const {
     HandleType entry;
     if (this->cache().Find(boundref, entry)) {
       // we have to check if it maps to Impl* since somebody
@@ -56,7 +57,7 @@ class DerivedAssetHandleD_ : public virtual BaseD_, public ROBase_
     }
     return entry;
   }
-  virtual HandleType Load(const std::string &boundref) const {
+  virtual HandleType Load(const SharedString &boundref) const {
     // Impl::Load will succeed or throw.
     // The derived khRefGuard will be automatically converted
     // the the base khRefGuard
@@ -64,7 +65,7 @@ class DerivedAssetHandleD_ : public virtual BaseD_, public ROBase_
   }
  public:
   DerivedAssetHandleD_(void) : BBase(), BaseD(), ROBase() { }
-  DerivedAssetHandleD_(const std::string &ref_) :
+  DerivedAssetHandleD_(const SharedString &ref_) :
       // Only call the common (virtually inherited) base class with the initializtion state.
       // It's the only one that has state anyway.  Also, explicitly calling the virtual base
       // class puts a build time check to ensure BBase is a virtural base class of this class.
@@ -141,7 +142,7 @@ class MutableAssetHandleD_ : public virtual Base_ {
   typedef typename Base::Base BBase;
   typedef typename Base::Impl Impl;
 
-  typedef std::map<std::string, Base> DirtyMap;
+  typedef std::map<SharedString, Base> DirtyMap;
   static DirtyMap dirtyMap;
 
   // Test whether an asset is a project asset version.
@@ -241,7 +242,7 @@ class MutableAssetHandleD_ : public virtual Base_ {
   }
 
  protected:
-  virtual void OnBind(const std::string &boundref) const {
+  virtual void OnBind(const SharedString &boundref) const {
     Base::OnBind(boundref);
     // if already exists, old one will win, that's OK
     dirtyMap.insert(std::make_pair(boundref, *this));
@@ -299,7 +300,7 @@ class MutableAssetHandleD_ : public virtual Base_ {
   // inheritance.  We can't rely as much on compiler generated move operation.
  public:
   MutableAssetHandleD_(void) : BBase(), Base() { }
-  MutableAssetHandleD_(const std::string &ref_) :
+  MutableAssetHandleD_(const SharedString &ref_) :
       // Only call the common (virtually inherited) base class with the initializtion state.
       // It's the only one that has state anyway.  Also, explicitly calling the virtual base
       // class puts an explicit check to ensure BBase a virtural base class of this class.
@@ -375,13 +376,13 @@ class MutableDerivedAssetHandleD_ : public DerivedBase_, public MutableBase_
   typedef typename MutableBase::BBase MBBase; // this is assumed to be the same type as BBase
 protected:
   // must overide these to resolve ambiguities
-  virtual HandleType CacheFind(const std::string &boundref) const {
+  virtual HandleType CacheFind(const SharedString &boundref) const {
     return DerivedBase::CacheFind(boundref);
   }
-  virtual HandleType Load(const std::string &boundref) const {
+  virtual HandleType Load(const SharedString &boundref) const {
     return DerivedBase::Load(boundref);
   }
-  virtual void OnBind(const std::string &boundref) const {
+  virtual void OnBind(const SharedString &boundref) const {
     return MutableBase::OnBind(boundref);
   }
 
@@ -415,7 +416,7 @@ protected:
  public:
   MutableDerivedAssetHandleD_(void) :
       BBase(), BaseD(), DerivedBase(), MutableBase() { }
-  MutableDerivedAssetHandleD_(const std::string &ref_) :
+  MutableDerivedAssetHandleD_(const SharedString &ref_) :
       // Only call the common (virtually inherited) base class with the initializtion state.
       // It's the only one that has state anyway.  Also, explicitly calling the virtual base
       // class puts a build time check to ensure BBase is a virtural base class of this class.
