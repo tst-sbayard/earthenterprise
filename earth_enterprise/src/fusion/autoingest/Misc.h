@@ -24,7 +24,7 @@
 
 extern std::string GetFormattedTimeString(time_t timeval = 0);
 extern std::string GetFormattedElapsedTimeString(uint elapsed);
-extern void GetMinMaxLevels(const std::string &ref,
+extern void GetMinMaxLevels(const SharedString &ref,
                             uint &minlevel, uint &maxlevel);
 
 typedef std::map<std::string,std::string(*)(const std::string &)> SubstQualMap;

@@ -59,7 +59,7 @@ GetFormattedElapsedTimeString(uint elapsed)
 
 
 void
-GetMinMaxLevels(const std::string &ref, uint &minlevel, uint &maxlevel)
+GetMinMaxLevels(const SharedString &ref, uint &minlevel, uint &maxlevel)
 {
   if (AssetVersionRef(ref).Version() == "current") {
     Asset asset(ref);

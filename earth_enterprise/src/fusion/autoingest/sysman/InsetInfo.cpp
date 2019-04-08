@@ -211,7 +211,7 @@ void CalcPacketGenInfo(const khTilespace            &tilespace,
     const InsetInfo &insetInfo = insetInfos[i];
     AssetVersionRef verref =
       AssetVersionRef(insetInfo.combinedrp_.Ref());
-    std::string assetname =
+    SharedString assetname =
       AssetImpl::WorkingDir(verref.AssetRef())
       + "packgen" + AssetDefs::FileExtension(gentype, "PacketGen");
 

@@ -124,7 +124,7 @@ khResourceManager::Init(void)
         notify(NFY_FATAL, "Unrecognized task symlink %s",
                child.c_str());
       }
-      std::string verref;
+      SharedString verref;
       if (!khReadSymlink(child, verref)) {
         notify(NFY_FATAL, "Unable to process old tasks");
       }
@@ -718,7 +718,7 @@ khResourceManager::SubmitTask(const SubmitTaskMsg &msg)
 // ***  command - DeleteTask
 // ****************************************************************************
 void
-khResourceManager::DeleteTask(const std::string &verref)
+khResourceManager::DeleteTask(const SharedString &verref)
 {
   assert(!mutex.trylock());
 

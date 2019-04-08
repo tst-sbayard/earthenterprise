@@ -101,7 +101,7 @@ khAssetManager::ApplyPending(void)
   // The actual list saved may be smaller than what's
   // in the dirty set. Some things can be in the dirty set
   // even if it really didn't change
-  std::vector<std::string> savedAssets;
+  std::vector<SharedString> savedAssets;
 
 
   QTime timer;
@@ -571,7 +571,7 @@ khAssetManager::ClientListenerLoop(void) throw() {
 // ***  khAssetManager - routines that gather changes while AssetGuard is held
 // ****************************************************************************
 void
-khAssetManager::NotifyVersionStateChange(const std::string &ref,
+khAssetManager::NotifyVersionStateChange(const SharedString &ref,
                                          AssetDefs::State state)
 {
   // assert that we're already locked
@@ -592,7 +592,7 @@ khAssetManager::NotifyVersionStateChange(const std::string &ref,
 }
 
 void
-khAssetManager::NotifyVersionProgress(const std::string &ref, double progress)
+khAssetManager::NotifyVersionProgress(const SharedString &ref, double progress)
 {
   // assert that we're already locked
   assert(!mutex.TryLock());
@@ -601,7 +601,7 @@ khAssetManager::NotifyVersionProgress(const std::string &ref, double progress)
 }
 
 void
-khAssetManager::SubmitTask(const std::string &verref, const TaskDef &taskdef,
+khAssetManager::SubmitTask(const SharedString &verref, const TaskDef &taskdef,
                            int priority)
 {
   // assert that we're already locked
@@ -619,7 +619,7 @@ khAssetManager::SubmitTask(const std::string &verref, const TaskDef &taskdef,
 }
 
 void
-khAssetManager::DeleteTask(const std::string &verref)
+khAssetManager::DeleteTask(const SharedString &verref)
 {
   // assert that we're already locked
   assert(!mutex.TryLock());
@@ -690,7 +690,7 @@ khAssetManager::TaskDone(const TaskDoneMsg &msg)
 }
 
 void
-khAssetManager::BuildAsset(const std::string &assetref, bool &needed)
+khAssetManager::BuildAsset(const SharedString &assetref, bool &needed)
 {
   assert(!mutex.TryLock());
   notify(NFY_INFO, "BuildAsset %s", assetref.c_str());
@@ -700,7 +700,7 @@ khAssetManager::BuildAsset(const std::string &assetref, bool &needed)
 }
 
 void
-khAssetManager::ProductReImport(const std::string &assetref, bool &updated)
+khAssetManager::ProductReImport(const SharedString &assetref, bool &updated)
 {
   assert(!mutex.TryLock());
 
@@ -757,7 +757,7 @@ khAssetManager::ProductReImport(const std::string &assetref, bool &updated)
 }
 
 void
-khAssetManager::CancelVersion(const std::string &verref)
+khAssetManager::CancelVersion(const SharedString &verref)
 {
   assert(!mutex.TryLock());
   notify(NFY_INFO, "CancelVersion %s", verref.c_str());
@@ -765,7 +765,7 @@ khAssetManager::CancelVersion(const std::string &verref)
 }
 
 void
-khAssetManager::RebuildVersion(const std::string &verref)
+khAssetManager::RebuildVersion(const SharedString &verref)
 {
   assert(!mutex.TryLock());
   notify(NFY_INFO, "RebuildVersion %s", verref.c_str());
@@ -773,7 +773,7 @@ khAssetManager::RebuildVersion(const std::string &verref)
 }
 
 void
-khAssetManager::SetBadVersion(const std::string &verref)
+khAssetManager::SetBadVersion(const SharedString &verref)
 {
   assert(!mutex.TryLock());
   notify(NFY_INFO, "SetBadVersion %s", verref.c_str());
@@ -781,7 +781,7 @@ khAssetManager::SetBadVersion(const std::string &verref)
 }
 
 void
-khAssetManager::ClearBadVersion(const std::string &verref)
+khAssetManager::ClearBadVersion(const SharedString &verref)
 {
   assert(!mutex.TryLock());
   notify(NFY_INFO, "ClearBadVersion %s", verref.c_str());
@@ -789,7 +789,7 @@ khAssetManager::ClearBadVersion(const std::string &verref)
 }
 
 void
-khAssetManager::CleanVersion(const std::string &verref)
+khAssetManager::CleanVersion(const SharedString &verref)
 {
   assert(!mutex.TryLock());
   notify(NFY_INFO, "CleanVersion %s", verref.c_str());
@@ -1003,7 +1003,7 @@ khAssetManager::MercatorMapDatabaseModify(const MapDatabaseEditRequest &req) {
 }
 
 void
-khAssetManager::GetCurrTasks(const std::string &dummy, TaskLists &ret) {
+khAssetManager::GetCurrTasks(const SharedString &dummy, TaskLists &ret) {
   assert(!mutex.TryLock());
   notify(NFY_INFO, "GetCurrTasks");
   khLockGuard lock(theResourceManager.mutex);
@@ -1011,7 +1011,7 @@ khAssetManager::GetCurrTasks(const std::string &dummy, TaskLists &ret) {
 }
 
 void
-khAssetManager::ReloadConfig(const std::string &dummy) {
+khAssetManager::ReloadConfig(const SharedString &dummy) {
   assert(!mutex.TryLock());
   notify(NFY_INFO, "ReloadConfig");
   alwaysTaskCmds.push_back
@@ -1139,7 +1139,7 @@ std::string khAssetManager::PushDatabase(
                                    &progress, &auth);
   std::string gedb_path;
   std::string db_type;
-  std::string db_ref;
+  SharedString db_ref;
 
   if (!AssetVersionImpl::GetGedbPathAndType(
       dbname, &gedb_path, &db_type, &db_ref)) {
@@ -1219,7 +1219,7 @@ std::string khAssetManager::PublishDatabase(
                                    &progress, &auth);
   std::string gedb_path;
   std::string db_type;
-  std::string db_ref;
+  SharedString db_ref;
 
   if (!AssetVersionImpl::GetGedbPathAndType(
       dbname, &gedb_path, &db_type, &db_ref)) {

@@ -56,7 +56,7 @@ TaskRequirements::Output::Output(const std::string &v,
 // ***  TaskRequirements
 // ****************************************************************************
 TaskRequirements::TaskRequirements(const TaskDef &taskdef, uint taskid,
-                                   const std::string &verref)
+                                   const SharedString &verref)
 {
   // pre-fill my inputs with volume & host info from taskdef's inputs
   for (std::vector<TaskDef::Input>::const_iterator i =
@@ -264,7 +264,7 @@ class PathPatternTool
   std::string taskid;
   std::string defaultpath;
   std::string vernum;
-  std::string assetref;
+  SharedString assetref;
 
  public:
   PathPatternTool(uint taskid_,
@@ -303,7 +303,7 @@ void
 TaskRequirements::ApplyOutputConstraint(uint index,
                                         const TaskRule::OutputConstraint &oc,
                                         uint taskid,
-                                        const std::string &verref)
+                                        const SharedString &verref)
 {
   Output &output(outputs[index]);
 
@@ -397,7 +397,7 @@ TaskRequirements::ApplyOutputConstraint(uint index,
 void
 TaskRequirements::ApplyUserSuppliedRules(const TaskDef &taskDef,
                                          uint taskid,
-                                         const std::string &verref)
+                                         const SharedString &verref)
 {
   // first type to find the taskrule specialized by asset type
   RuleMap::const_iterator found = taskRules.find(ToString(taskDef.assetType) +

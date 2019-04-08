@@ -80,12 +80,12 @@ class khAssetManager
 
   // routines others can call to tell me about things that need to be done
   // once the AssetGuard has been released
-  void NotifyVersionStateChange(const std::string &ref,
+  void NotifyVersionStateChange(const SharedString &ref,
                                 AssetDefs::State state);
-  void NotifyVersionProgress(const std::string &ref,double progress);
-  void SubmitTask(const std::string &verref, const TaskDef &taskdef,
+  void NotifyVersionProgress(const SharedString &ref,double progress);
+  void SubmitTask(const SharedString &verref, const TaskDef &taskdef,
                   int32 priority = 0);
-  void DeleteTask(const std::string &verref);
+  void DeleteTask(const SharedString &verref);
   void DeleteFile(const std::string &path) {
     pendingFileDeletes.push_back(path);
   }
@@ -165,12 +165,12 @@ class khAssetManager
   void TaskLost(const TaskLostMsg &);
   void TaskProgress(const TaskProgressMsg &);
   void TaskDone(const TaskDoneMsg &);
-  void BuildAsset(const std::string &assetref, bool &ret);
-  void CancelVersion(const std::string &verref);
-  void RebuildVersion(const std::string &verref);
-  void SetBadVersion(const std::string &verref);
-  void ClearBadVersion(const std::string &verref);
-  void CleanVersion(const std::string &verref);
+  void BuildAsset(const SharedString &assetref, bool &ret);
+  void CancelVersion(const SharedString &verref);
+  void RebuildVersion(const SharedString &verref);
+  void SetBadVersion(const SharedString &verref);
+  void ClearBadVersion(const SharedString &verref);
+  void CleanVersion(const SharedString &verref);
   void RasterProductImport(const RasterProductImportRequest &req);
   void MercatorRasterProductImport(const RasterProductImportRequest &req);
   void RasterProjectEdit(const RasterProjectEditRequest &req);
@@ -193,8 +193,8 @@ class khAssetManager
   void DatabaseEdit(const DatabaseEditRequest &req);
   void DatabaseNew(const DatabaseEditRequest &req);
   void DatabaseModify(const DatabaseEditRequest &req);
-  void GetCurrTasks(const std::string &dummy, TaskLists &ret);
-  void ReloadConfig(const std::string &dummy);
+  void GetCurrTasks(const SharedString &dummy, TaskLists &ret);
+  void ReloadConfig(const SharedString &dummy);
   void MapProjectEdit(const MapProjectEditRequest &req);
   void MapLayerEdit(const MapLayerEditRequest &req);
   void KMLProjectEdit(const KMLProjectEditRequest &req);
@@ -205,7 +205,7 @@ class khAssetManager
   void MercatorMapDatabaseNew(const MapDatabaseEditRequest &req);
   void MercatorMapDatabaseModify(const MapDatabaseEditRequest &req);
   // Re-import source files if updated.
-  void ProductReImport(const std::string &assetref, bool &updated);
+  void ProductReImport(const SharedString &assetref, bool &updated);
 
   void MakeAssetDir(const std::string &assetdir);
 

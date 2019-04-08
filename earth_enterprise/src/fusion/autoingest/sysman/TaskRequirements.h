@@ -81,7 +81,7 @@ class TaskRequirements
 
   // will throw exception describing conflicts
   TaskRequirements(const TaskDef &taskdef, uint taskid,
-                   const std::string &verref);
+                   const SharedString &verref);
  private:
   // will throw exception describing conflicts
   void EnsureNoConflicts(void);
@@ -89,9 +89,9 @@ class TaskRequirements
   void ApplyInputConstraint(uint index, const TaskRule::InputConstraint &);
   void ApplyOutputConstraint(uint index,
                              const TaskRule::OutputConstraint &,
-                             uint taskid, const std::string &verref);
+                             uint taskid, const SharedString &verref);
   void ApplyUserSuppliedRules(const TaskDef &taskDef, uint taskid,
-                              const std::string &verref);
+                              const SharedString &verref);
 };
 
 #endif /* __TaskRequirements_h */

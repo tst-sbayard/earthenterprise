@@ -179,7 +179,7 @@ class khResourceManager : public khVolumeManager
 
   // ***** commands *****
   void SubmitTask(const SubmitTaskMsg &msg);
-  void DeleteTask(const std::string &verref);
+  void DeleteTask(const SharedString &verref);
 
   // routines to send notifications to khAssetManager
   void NotifyTaskLost(const TaskLostMsg &lostMsg);
