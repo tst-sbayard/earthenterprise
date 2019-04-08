@@ -43,7 +43,7 @@ class AssetStorage {
 
 #hquote
  public:
-  void SetInvalid(const std::string &ref) {
+  void SetInvalid(const SharedString &ref) {
     name  = ref;
     type  = AssetDefs::Invalid;
   }
@@ -68,7 +68,7 @@ class AssetStorage {
       return 0;
     }
   }
-  std::string CurrVersionRef(void) const {
+  SharedString CurrVersionRef(void) const {
     if (versions.size()) {
       return versions.front();
     } else {
@@ -102,7 +102,7 @@ class AssetVersionStorage {
 
 #hquote
  public:
-  void SetInvalid(const std::string &ref) {
+  void SetInvalid(const SharedString &ref) {
     name  = ref;
     type  = AssetDefs::Invalid;
     version = 0;

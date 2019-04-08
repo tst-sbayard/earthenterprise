@@ -159,7 +159,7 @@ void RasterProjectConfig::ResetIds(void) {
 // Used only by the GUI
 class RasterProjectEditRequest {
   AssetDefs::Type type;
-  std::string assetname;
+  SharedString assetname;
   RasterProjectConfig config;
   khMetaData meta;
 
@@ -178,12 +178,12 @@ class RasterProjectEditRequest {
 
 class RasterProjectModifyRequest {
   class Item {
-    std::string dataAsset;
+    SharedString dataAsset;
     uint overridemax;   // 0 -> no override
     uint peergroup;     // 0 -> not in a peer group
   };
 
-  std::string assetname;
+  SharedString assetname;
   AssetDefs::Type  type;
   std::vector<Item> items;
   bool enable_timemachine;
@@ -197,9 +197,9 @@ class RasterProjectModifyRequest {
 };
 
 class RasterProjectDropFromRequest {
-  std::string assetname;
+  SharedString assetname;
   AssetDefs::Type  type;
-  std::vector<std::string> productRefs;
+  std::vector<SharedString> productRefs;
 #pragma StrLoadAndSave
 #hquote
   RasterProjectDropFromRequest(AssetDefs::Type t) : type(t) { }

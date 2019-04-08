@@ -14,9 +14,10 @@
 
 #include <string>
 #include <khTypes.h>
+#include "common/SharedString.h"
 
 class InsetStackItem {
-  std::string dataAsset;
+  SharedString dataAsset;
   uint maxlevel;                // the maximum level to use in the blend
   // (NOT the dataAsset's maxlevel)
   uint overridemax = uint(0);   // 0 -> no override

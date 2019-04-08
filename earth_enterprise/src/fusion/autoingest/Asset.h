@@ -63,16 +63,16 @@ class AssetImpl : public khRefCounter, public AssetStorage {
 
 
   virtual ~AssetImpl(void) { }
-  std::string GetRef(void) const { return name; }
+  SharedString GetRef(void) const { return name; }
 
 
-  std::string  GetLastGoodVersionRef(void) const;
+  SharedString  GetLastGoodVersionRef(void) const;
   void GetInputFilenames(std::vector<std::string> &out) const;
   virtual void AfterLoad(void) { }
 
   // static helpers
-  static std::string WorkingDir(const std::string &ref);
-  static std::string XMLFilename(const std::string &ref);
+  static std::string WorkingDir(const SharedString &ref);
+  static std::string XMLFilename(const SharedString &ref);
 };
 
 // ****************************************************************************

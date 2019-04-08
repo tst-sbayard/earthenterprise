@@ -21,6 +21,7 @@
 #include <map>
 #include <time.h>
 #include <common/khTypes.h>
+#include "common/SharedString.h"
 
 extern std::string GetFormattedTimeString(time_t timeval = 0);
 extern std::string GetFormattedElapsedTimeString(uint elapsed);

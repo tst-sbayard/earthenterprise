@@ -18,7 +18,7 @@
 #include "fusion/autoingest/AssetVersion.h"
 
 
-std::string AssetImpl::GetLastGoodVersionRef(void) const {
+SharedString AssetImpl::GetLastGoodVersionRef(void) const {
   for (VersionList::const_iterator i = versions.begin();
        i != versions.end(); ++i) {
     AssetVersion ver(*i);
@@ -29,12 +29,12 @@ std::string AssetImpl::GetLastGoodVersionRef(void) const {
   return AssetVersionRef(GetRef(), 0);  // an invalid version ref
 }
 
-std::string AssetImpl::WorkingDir(const std::string &ref) {
+std::string AssetImpl::WorkingDir(const SharedString &ref) {
   return ref + "/";
 }
 
 
-std::string AssetImpl::XMLFilename(const std::string &ref) {
+std::string AssetImpl::XMLFilename(const SharedString &ref) {
   return AssetDefs::AssetPathToFilename(WorkingDir(ref) + "khasset.xml");
 }
 

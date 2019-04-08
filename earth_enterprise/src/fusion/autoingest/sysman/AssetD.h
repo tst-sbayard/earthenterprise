@@ -33,14 +33,14 @@ class AssetImplD : public virtual AssetImpl
   AssetImplD(const AssetImplD&);
   AssetImplD& operator=(const AssetImplD&);
  protected:
-  static khRefGuard<AssetImplD> Load(const std::string &boundref);
+  static khRefGuard<AssetImplD> Load(const SharedString &boundref);
   virtual bool Save(const std::string &filename) const = 0;
 
   AssetImplD(void) : AssetImpl() { }
   AssetImplD(const AssetStorage &storage)
       : AssetImpl(storage) { }
 
-  void AddVersionRef(const std::string &verref);
+  void AddVersionRef(const SharedString &verref);
 
   bool InputsUpToDate(const AssetVersion &,
                       const std::vector<AssetVersion> &cachedInputs) const;
@@ -52,7 +52,7 @@ class AssetImplD : public virtual AssetImpl
   // uptodate).  needed is set to true iff everything was not up to date
   // and so something happened as a result of the Update call.
   virtual AssetVersionD Update(bool &needed) const = 0;
-  void Modify(const std::vector<std::string>& inputs_,
+  void Modify(const std::vector<SharedString>& inputs_,
               const khMetaData &meta_);
 };
 

@@ -93,14 +93,14 @@ class AssetHandle_  {
   void Bind(void) const;
 
   // Allows subclasses to do extra work.
-  virtual void OnBind(const std::string &boundref) const { }
+  virtual void OnBind(const SharedString &boundref) const { }
 
-  virtual HandleType CacheFind(const std::string &boundref) const {
+  virtual HandleType CacheFind(const SharedString &boundref) const {
     HandleType entry;
     (void)cache().Find(boundref, entry);
     return entry;
   }
-  virtual HandleType Load(const std::string &boundref) const {
+  virtual HandleType Load(const SharedString &boundref) const {
     return HandleType(Impl::Load(boundref));
   }
 
@@ -151,7 +151,7 @@ class DerivedAssetHandle_ : public virtual Base_ {
   typedef typename Base::HandleType HandleType;
 
  protected:
-  virtual HandleType CacheFind(const std::string &boundref) const {
+  virtual HandleType CacheFind(const SharedString &boundref) const {
     HandleType entry;
     if (this->cache().Find(boundref, entry)) {
       // we have to check if it maps to Impl* since somebody
@@ -162,7 +162,7 @@ class DerivedAssetHandle_ : public virtual Base_ {
     }
     return entry;
   }
-  virtual HandleType Load(const std::string &boundref) const {
+  virtual HandleType Load(const SharedString &boundref) const {
     // Impl::Load will succeed or throw.
     // The derived khRefGuard will be automatically converted
     // the the base khRefGuard

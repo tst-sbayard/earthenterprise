@@ -105,7 +105,7 @@ class MercatorRasterProjectAssetVersionImpl {
     // The first 3 children are reserved, the rest are dated imagery indexes.
     for(uint i = 3; i < children.size(); ++i) {
       RasterGEIndexAssetVersion index(children[i]);
-      std::string index_ref(index->GetRef());
+      SharedString index_ref(index->GetRef());
       std::string date_string(index->config.date_string_);
       std::string index_file = index->GetOutputFilename(0);
       DatedImageryIndexInfo info(index_ref, date_string, channel_id++);
@@ -214,7 +214,7 @@ class MercatorRasterProjectAssetVersionImplD {
 void MercatorRasterProjectAssetImplD::AddInsets(
     const std::vector<RasterProjectModifyRequest::Item> &items) {
   // make a set of those that I already have
-  std::set<std::string> have;
+  std::set<SharedString> have;
   for (std::vector<InsetStackItem>::const_iterator inset =
          config.insets.begin();
        inset != config.insets.end(); ++inset) {
@@ -228,7 +228,7 @@ void MercatorRasterProjectAssetImplD::AddInsets(
     // error if there's anything I already have
     if (have.find(item->dataAsset) != have.end()) {
       throw khException(kh::tr("Project already has inset '%1'")
-                        .arg(item->dataAsset));
+                        .arg(item->dataAsset.c_str()));
     }
 
     // figure out what its levels should be
@@ -365,7 +365,7 @@ void MercatorRasterProjectAssetImplD::HandleEditRequest(
                                                kMercatorProjectSubtype));
 
   // Will be filled in later.
-  std::vector<std::string> inputs;
+  std::vector<SharedString> inputs;
 
   // Custom FindMake - modified to set/preserve indexVersion & fuid_channel_.
   MutableMercatorRasterProjectAssetD project =
@@ -435,7 +435,7 @@ void MercatorRasterProjectAssetImplD::HandleNewRequest(
     RasterProjectConfig projConfig(req.type);
     MutableMercatorRasterProjectAssetD project =
       MercatorRasterProjectFactory::Make(projname,
-                                 std::vector<std::string>(),
+                                 std::vector<SharedString>(),
                                  khMetaData(),
                                  projConfig);
 
@@ -503,8 +503,8 @@ void MercatorRasterProjectAssetImplD::HandleDropFromRequest(
   }
 
   // check for valid asset refs
-  std::set<std::string> todrop;
-  for (std::vector<std::string>::const_iterator r =
+  std::set<SharedString> todrop;
+  for (std::vector<SharedString>::const_iterator r =
          req.productRefs.begin(); r != req.productRefs.end(); ++r) {
     if (std::find_if(project->config.insets.begin(),
                      project->config.insets.end(),
@@ -628,7 +628,7 @@ void MercatorRasterProjectAssetVersionImplD::LoadInsetInfo<
       MercatorRasterProductAssetVersion> > &insets) const;
 
 void MercatorRasterProjectAssetVersionImplD::DelayedBuildChildren(void) {
-  std::string assetRef = GetAssetRef();
+  SharedString assetRef = GetAssetRef();
 
   // short circuit on degenerate case. Do this so the rest of the code
   // can assume that there is at least one inset.
@@ -715,7 +715,7 @@ void MercatorRasterProjectAssetVersionImplD::DelayedBuildChildren(void) {
   MutableAssetVersionD dbroot =
     RasterDBRootFactory::FindMakeAndUpdateSubAsset(
         assetRef, type, "dbroot",
-        std::vector<std::string>(),
+        std::vector<SharedString>(),
         khMetaData(),
         dbrootConfig,
         std::vector<AssetVersion>());
@@ -739,7 +739,7 @@ void MercatorRasterProjectAssetVersionImplD::DelayedBuildChildren(void) {
             config.legend));
     MutableAssetVersionD layerjs =
       MapLayerJSFactory::FindMakeAndUpdate(layerJSAssetName,
-                                           std::vector<std::string>(),
+                                           std::vector<SharedString>(),
                                            khMetaData(),
                                            layerJSConfig,
                                            std::vector<AssetVersion>());
@@ -926,8 +926,8 @@ uint32 MercatorRasterProjectAssetVersionImplD::BuildIndex(
   }
 
   // create my children giving them each a bigger piece of the stack
-  std::vector<std::string> packgenkids;
-  std::vector<std::string> packgenassets;
+  std::vector<SharedString> packgenkids;
+  std::vector<SharedString> packgenassets;
   std::vector<AssetVersion> packgenvers;
   packgenkids.reserve(numInsets);
   packgenassets.reserve(numInsets);
@@ -989,7 +989,7 @@ uint32 MercatorRasterProjectAssetVersionImplD::BuildIndex(
       // see if we want to depend on the packgen for this guy
       // packetgenverref will only be populated if the other one
       // actually cached raster blends.
-      std::string packgenVerRef;
+      SharedString packgenVerRef;
       if (!otherGenInfo.packetgenverref.empty() &&
           otherWillContribToMinify) {
         packgenVerRef = otherGenInfo.packetgenverref;
@@ -1036,7 +1036,7 @@ uint32 MercatorRasterProjectAssetVersionImplD::BuildIndex(
   // ------------------------
   // make index sub asset
   // ------------------------
-  std::string assetRef = GetAssetRef();
+  SharedString assetRef = GetAssetRef();
   std::string dbname = khDropExtension(khBasename(assetRef));
   RasterGEIndexConfig geindexConfig;
   geindexConfig.db_name_ = dbname;
@@ -1105,7 +1105,7 @@ uint32 MercatorRasterProjectAssetVersionImplD::BuildIndex(
       geindexConfig.packet_insets_.push_back(RasterPacketInset());
       geindexConfig.packet_insets_.back().levels_.reserve(
           (*packgenver)->children.size());
-      for (std::vector<std::string>::const_iterator packlevelref =
+      for (std::vector<SharedString>::const_iterator packlevelref =
              (*packgenver)->children.begin();
            packlevelref != (*packgenver)->children.end(); ++packlevelref) {
         geindexConfig.packet_insets_.back().levels_.push_back(

@@ -198,7 +198,7 @@ RasterProductAssetImplD::HandleImportRequest(
   }
 
   // normalize the supplied asset name
-  std::string assetname =
+  SharedString assetname =
     AssetDefs::NormalizeAssetName(req.assetname, req.type, kProductSubtype);
 
 
@@ -259,11 +259,11 @@ RasterProductAssetImplD::HandleImportRequest(
     if (product_config.fuid_resource_ == 0) {
       product_config.fuid_resource_ = asset->config.fuid_resource_;
     }
-    asset->Modify(std::vector<std::string>(), req.meta, product_config);
+    asset->Modify(std::vector<SharedString>(), req.meta, product_config);
   } else {
     // It is a "Save" or "SaveAs" request when creating a new asset.
     asset = RasterProductFactory::Make(assetname, req.type,
-                                       std::vector<std::string>(),
+                                       std::vector<SharedString>(),
                                        req.meta, req.config);
   }
   if (!asset) {
@@ -299,7 +299,7 @@ RasterProductAssetImplD::HandleImportRequest(
     }
 
     // Find the matching maskfile.
-    std::string maskfile;
+    SharedString maskfile;
     if (!khIsURI(srcfile)) {
       if (khExtension(srcfile) == ".pyr") {
         if (!pyrio::FindHighestResMaskPyramidFile(srcfile, &maskfile)) {
@@ -366,7 +366,7 @@ RasterProductAssetVersionImplD::OnStateChange(AssetDefs::State newstate,
 void
 RasterProductAssetVersionImplD::UpdateChildren(void)
 {
-  std::string assetRef = GetAssetRef();
+  SharedString assetRef = GetAssetRef();
 
   // ***** load my input versions (only if they aren't already loaded)
   // I'll use this list of my inputs to pass to my children so they don't
